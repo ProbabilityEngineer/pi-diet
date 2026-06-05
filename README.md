@@ -6,8 +6,16 @@ Compact oversized Pi tool results with transparent previews and spill files.
 
 ## Install
 
+From npm:
+
 ```bash
-pi install .
+pi install npm:pi-diet
+```
+
+From GitHub:
+
+```bash
+pi install git:github.com/ProbabilityEngineer/pi-diet
 ```
 
 For local development without installing:

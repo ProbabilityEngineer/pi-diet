@@ -6,6 +6,14 @@
   "type": "module",
   "license": "MIT",
   "author": "ProbabilityEngineer",
+  "homepage": "https://github.com/ProbabilityEngineer/pi-diet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProbabilityEngineer/pi-diet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ProbabilityEngineer/pi-diet/issues"
+  },
   "keywords": [
     "pi-package",
     "pi-extension",
