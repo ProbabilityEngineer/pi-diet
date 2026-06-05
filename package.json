@@ -1,0 +1,41 @@
+{
+  "name": "pi-diet",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Compact oversized Pi tool results with transparent previews and spill files.",
+  "type": "module",
+  "license": "MIT",
+  "author": "ProbabilityEngineer",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi",
+    "tool-results",
+    "context",
+    "sessions"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.76.0",
+    "typescript": "^5.9.3",
+    "typebox": "latest"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "files": [
+    "index.ts",
+    "src",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts"
+  }
+}
