@@ -10,13 +10,18 @@ export default function dietPi(pi: ExtensionAPI) {
     return `pi-diet ${settings.enabled ? "on" : "off"} · threshold=${settings.thresholdChars} · head=${settings.headChars} · tail=${settings.tailChars}`;
   }
 
-  function footerStatusText(): string {
-    return `diet:${settings.enabled ? "on" : "off"}`;
-  }
-
-  function refreshStatus(ctx: { hasUI: boolean; ui: { setStatus: (key: string, text: string | undefined) => void } }) {
+  function refreshStatus(ctx: {
+    hasUI: boolean;
+    ui: {
+      setStatus: (key: string, text: string | undefined) => void;
+      theme: { fg: (color: "success" | "dim", text: string) => string };
+    };
+  }) {
     if (!ctx.hasUI) return;
-    ctx.ui.setStatus(STATUS_KEY, footerStatusText());
+    const text = settings.enabled
+      ? ctx.ui.theme.fg("success", "diet")
+      : ctx.ui.theme.fg("dim", "diet");
+    ctx.ui.setStatus(STATUS_KEY, text);
   }
 
   pi.registerCommand("diet", {
