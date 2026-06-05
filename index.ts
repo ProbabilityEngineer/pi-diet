@@ -19,8 +19,8 @@ export default function dietPi(pi: ExtensionAPI) {
   }) {
     if (!ctx.hasUI) return;
     const text = settings.enabled
-      ? ctx.ui.theme.fg("success", "diet")
-      : ctx.ui.theme.fg("dim", "diet");
+      ? ctx.ui.theme.fg("success", "diet: on")
+      : ctx.ui.theme.fg("dim", "diet: off");
     ctx.ui.setStatus(STATUS_KEY, text);
   }
 
