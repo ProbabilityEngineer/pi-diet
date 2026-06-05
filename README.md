@@ -44,6 +44,7 @@ Early MVP, but validated against a real Pi session for oversized bash output.
 
 ## Commands
 
+- `/diet` toggles on/off
 - `/diet status`
 - `/diet on`
 - `/diet off`

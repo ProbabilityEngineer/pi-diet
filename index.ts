@@ -20,10 +20,16 @@ export default function dietPi(pi: ExtensionAPI) {
   }
 
   pi.registerCommand("diet", {
-    description: "Control pi-diet result compaction: status | on | off",
+    description: "Control pi-diet result compaction: toggle by default, or use status | on | off",
     handler: async (args, ctx) => {
       const action = args.trim().toLowerCase();
-      if (!action || action === "status") {
+      if (!action) {
+        settings = { ...settings, enabled: !settings.enabled };
+        ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
+        refreshStatus(ctx);
+        return;
+      }
+      if (action === "status") {
         ctx.ui.notify(statusText(), "info");
         refreshStatus(ctx);
         return;
@@ -40,7 +46,7 @@ export default function dietPi(pi: ExtensionAPI) {
         refreshStatus(ctx);
         return;
       }
-      ctx.ui.notify("Usage: /diet status|on|off", "warning");
+      ctx.ui.notify("Usage: /diet | /diet status|on|off", "warning");
     },
   });
 
