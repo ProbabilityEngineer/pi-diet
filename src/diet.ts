@@ -180,6 +180,7 @@ export function buildCompactedText(args: {
     `Preview: first ${settings.headChars} chars + last ${settings.tailChars} chars shown unless specialized`,
     `Omitted: ${omitted} chars`,
     `Full output: ${spillPath}`,
+    `Inspect with read or rg if needed.`,
     metadata.trimEnd(),
     buildPreview(analyze, settings),
   ].filter(Boolean).join("\n\n");
