@@ -10,12 +10,16 @@ export default function dietPi(pi: ExtensionAPI) {
     return `pi-diet ${settings.enabled ? "on" : "off"} · threshold=${settings.thresholdChars} · head=${settings.headChars} · tail=${settings.tailChars}`;
   }
 
-  function refreshStatus(ctx: { hasUI: boolean; ui: { setStatus: (key: string, text: string | undefined) => void } }) {
-    if (!ctx.hasUI) return;
-    ctx.ui.setStatus(STATUS_KEY, statusText());
+  function footerStatusText(): string {
+    return `diet:${settings.enabled ? "on" : "off"}`;
   }
 
-  pi.registerCommand("diet-pi", {
+  function refreshStatus(ctx: { hasUI: boolean; ui: { setStatus: (key: string, text: string | undefined) => void } }) {
+    if (!ctx.hasUI) return;
+    ctx.ui.setStatus(STATUS_KEY, footerStatusText());
+  }
+
+  pi.registerCommand("diet", {
     description: "Control pi-diet result compaction: status | on | off",
     handler: async (args, ctx) => {
       const action = args.trim().toLowerCase();
@@ -36,7 +40,7 @@ export default function dietPi(pi: ExtensionAPI) {
         refreshStatus(ctx);
         return;
       }
-      ctx.ui.notify("Usage: /diet-pi status|on|off", "warning");
+      ctx.ui.notify("Usage: /diet status|on|off", "warning");
     },
   });
 
