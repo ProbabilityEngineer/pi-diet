@@ -1,5 +1,7 @@
 # pi-diet
 
+> One of my diet context engineering and workflow extensions. Add pi-diet-LSP, pi-diet-Ripgrep, pi-repo-move and others from [npm](https://www.npmjs.com/~probabilityengineer).
+
 Compact oversized Pi tool results with transparent previews and spill files.
 
 `pi-diet` keeps Pi sessions lean by filtering runaway tool outputs before they bloat model context and session JSONL files. Small results pass through unchanged. Large results are saved losslessly under `~/.pi/agent/pi-diet/spills/` and replaced with a compact preview, tail, omitted-size count, and spill path.
