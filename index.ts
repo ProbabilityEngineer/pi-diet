@@ -1,10 +1,35 @@
 import type { ExtensionAPI, ToolResultEvent } from "@earendil-works/pi-coding-agent";
-import { compactToolResult, DEFAULT_SETTINGS, type DietPiSettings, type ToolContentBlock } from "./src/diet.ts";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { compactToolResult, DEFAULT_SETTINGS, resolveAgentDir, type DietPiSettings, type ToolContentBlock } from "./src/diet.ts";
 
 const STATUS_KEY = "pi-diet";
+const STATUS_CONFIG = join(resolveAgentDir(), "pi-diet", "config.json");
 
 export default function dietPi(pi: ExtensionAPI) {
   let settings: DietPiSettings = { ...DEFAULT_SETTINGS };
+  let showStatus = true;
+
+  async function loadStatusPreference() {
+    try {
+      const config = JSON.parse(await readFile(STATUS_CONFIG, "utf8")) as { showStatus?: unknown };
+      if (typeof config.showStatus === "boolean") showStatus = config.showStatus;
+    } catch {
+      // Missing or invalid config keeps the default visible status.
+    }
+  }
+
+  async function saveStatusPreference(value: boolean) {
+    let config: Record<string, unknown> = {};
+    try {
+      config = JSON.parse(await readFile(STATUS_CONFIG, "utf8")) as Record<string, unknown>;
+    } catch {
+      // Create a new config when none exists.
+    }
+    config.showStatus = value;
+    await mkdir(join(resolveAgentDir(), "pi-diet"), { recursive: true });
+    await writeFile(STATUS_CONFIG, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+  }
 
   function statusText(): string {
     return `pi-diet ${settings.enabled ? "on" : "off"} · threshold=${settings.thresholdChars} · head=${settings.headChars} · tail=${settings.tailChars}`;
@@ -18,6 +43,10 @@ export default function dietPi(pi: ExtensionAPI) {
     };
   }) {
     if (!ctx.hasUI) return;
+    if (!showStatus) {
+      ctx.ui.setStatus(STATUS_KEY, undefined);
+      return;
+    }
     const text = settings.enabled
       ? ctx.ui.theme.fg("success", "diet: on")
       : ctx.ui.theme.fg("dim", "diet: off");
@@ -25,17 +54,28 @@ export default function dietPi(pi: ExtensionAPI) {
   }
 
   pi.registerCommand("diet", {
-    description: "Control pi-diet result compaction: toggle by default, or use status | on | off",
+    description: "Control pi-diet result compaction and its footer",
     handler: async (args, ctx) => {
       const action = args.trim().toLowerCase();
+      if (action === "footer" || action.startsWith("footer ")) {
+        const footerAction = action.slice("footer".length).trim();
+        if (footerAction !== "on" && footerAction !== "off") {
+          ctx.ui.notify("Usage: /diet footer on|off", "warning");
+          return;
+        }
+        showStatus = footerAction === "on";
+        try {
+          await saveStatusPreference(showStatus);
+        } catch (error) {
+          ctx.ui.notify(`Could not save pi-diet footer preference: ${String(error)}`, "warning");
+        }
+        refreshStatus(ctx);
+        ctx.ui.notify(`pi-diet footer ${showStatus ? "enabled" : "hidden"}`, "info");
+        return;
+      }
       if (!action) {
         settings = { ...settings, enabled: !settings.enabled };
         ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
-        refreshStatus(ctx);
-        return;
-      }
-      if (action === "status") {
-        ctx.ui.notify(statusText(), "info");
         refreshStatus(ctx);
         return;
       }
@@ -51,11 +91,12 @@ export default function dietPi(pi: ExtensionAPI) {
         refreshStatus(ctx);
         return;
       }
-      ctx.ui.notify("Usage: /diet | /diet status|on|off", "warning");
+      ctx.ui.notify("Usage: /diet on|off | /diet footer on|off", "warning");
     },
   });
 
   pi.on("session_start", async (_event, ctx) => {
+    await loadStatusPreference();
     refreshStatus(ctx);
   });
 
