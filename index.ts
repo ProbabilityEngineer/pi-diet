@@ -54,25 +54,9 @@ export default function dietPi(pi: ExtensionAPI) {
   }
 
   pi.registerCommand("diet", {
-    description: "Control pi-diet result compaction and its footer",
+    description: "Toggle pi-diet result compaction (currently on or off); use /diet on|off to set explicitly",
     handler: async (args, ctx) => {
       const action = args.trim().toLowerCase();
-      if (action === "footer" || action.startsWith("footer ")) {
-        const footerAction = action.slice("footer".length).trim();
-        if (footerAction !== "on" && footerAction !== "off") {
-          ctx.ui.notify("Usage: /diet footer on|off", "warning");
-          return;
-        }
-        showStatus = footerAction === "on";
-        try {
-          await saveStatusPreference(showStatus);
-        } catch (error) {
-          ctx.ui.notify(`Could not save pi-diet footer preference: ${String(error)}`, "warning");
-        }
-        refreshStatus(ctx);
-        ctx.ui.notify(`pi-diet footer ${showStatus ? "enabled" : "hidden"}`, "info");
-        return;
-      }
       if (!action) {
         settings = { ...settings, enabled: !settings.enabled };
         ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
@@ -91,7 +75,26 @@ export default function dietPi(pi: ExtensionAPI) {
         refreshStatus(ctx);
         return;
       }
-      ctx.ui.notify("Usage: /diet on|off | /diet footer on|off", "warning");
+      ctx.ui.notify("Usage: /diet [on|off]", "warning");
+    },
+  });
+
+  pi.registerCommand("diet-footer", {
+    description: "Show or hide the pi-diet footer status: /diet-footer on|off",
+    handler: async (args, ctx) => {
+      const action = args.trim().toLowerCase();
+      if (action !== "on" && action !== "off") {
+        ctx.ui.notify("Usage: /diet-footer on|off", "warning");
+        return;
+      }
+      showStatus = action === "on";
+      try {
+        await saveStatusPreference(showStatus);
+      } catch (error) {
+        ctx.ui.notify(`Could not save pi-diet footer preference: ${String(error)}`, "warning");
+      }
+      refreshStatus(ctx);
+      ctx.ui.notify(`pi-diet footer ${showStatus ? "enabled" : "hidden"}`, "info");
     },
   });
 
