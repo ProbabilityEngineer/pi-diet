@@ -46,8 +46,8 @@ Early MVP, but validated against a real Pi session for oversized bash output.
 
 ## Commands
 
-- `/diet` toggles compaction on/off.
-- `/diet-footer` toggles the pi-diet footer entry on/off.
+- `/diet` toggles compaction between enabled and disabled.
+- `/diet-footer` toggles the pi-diet footer entry between visible and hidden.
 
 The footer preference persists in `~/.pi/agent/pi-diet/config.json`; the footer status is visible by default.
 

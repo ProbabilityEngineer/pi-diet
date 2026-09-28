@@ -54,8 +54,12 @@ export default function dietPi(pi: ExtensionAPI) {
   }
 
   pi.registerCommand("diet", {
-    description: "Toggle pi-diet result compaction on/off",
-    handler: async (_args, ctx) => {
+    description: "Toggle pi-diet result compaction",
+    handler: async (args, ctx) => {
+      if (args.trim()) {
+        ctx.ui.notify("Usage: /diet (toggle only; no arguments)", "warning");
+        return;
+      }
       settings = { ...settings, enabled: !settings.enabled };
       ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
       refreshStatus(ctx);
@@ -63,8 +67,12 @@ export default function dietPi(pi: ExtensionAPI) {
   });
 
   pi.registerCommand("diet-footer", {
-    description: "Toggle the pi-diet footer status on/off",
-    handler: async (_args, ctx) => {
+    description: "Toggle the pi-diet footer status",
+    handler: async (args, ctx) => {
+      if (args.trim()) {
+        ctx.ui.notify("Usage: /diet-footer (toggle only; no arguments)", "warning");
+        return;
+      }
       showStatus = !showStatus;
       try {
         await saveStatusPreference(showStatus);
