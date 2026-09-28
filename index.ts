@@ -54,40 +54,18 @@ export default function dietPi(pi: ExtensionAPI) {
   }
 
   pi.registerCommand("diet", {
-    description: "Toggle pi-diet result compaction (currently on or off); use /diet on|off to set explicitly",
-    handler: async (args, ctx) => {
-      const action = args.trim().toLowerCase();
-      if (!action) {
-        settings = { ...settings, enabled: !settings.enabled };
-        ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
-        refreshStatus(ctx);
-        return;
-      }
-      if (action === "on") {
-        settings = { ...settings, enabled: true };
-        ctx.ui.notify("pi-diet enabled", "info");
-        refreshStatus(ctx);
-        return;
-      }
-      if (action === "off") {
-        settings = { ...settings, enabled: false };
-        ctx.ui.notify("pi-diet disabled", "info");
-        refreshStatus(ctx);
-        return;
-      }
-      ctx.ui.notify("Usage: /diet [on|off]", "warning");
+    description: "Toggle pi-diet result compaction on/off",
+    handler: async (_args, ctx) => {
+      settings = { ...settings, enabled: !settings.enabled };
+      ctx.ui.notify(`pi-diet ${settings.enabled ? "enabled" : "disabled"}`, "info");
+      refreshStatus(ctx);
     },
   });
 
   pi.registerCommand("diet-footer", {
-    description: "Show or hide the pi-diet footer status: /diet-footer on|off",
-    handler: async (args, ctx) => {
-      const action = args.trim().toLowerCase();
-      if (action !== "on" && action !== "off") {
-        ctx.ui.notify("Usage: /diet-footer on|off", "warning");
-        return;
-      }
-      showStatus = action === "on";
+    description: "Toggle the pi-diet footer status on/off",
+    handler: async (_args, ctx) => {
+      showStatus = !showStatus;
       try {
         await saveStatusPreference(showStatus);
       } catch (error) {
